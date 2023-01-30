@@ -32,13 +32,18 @@
             <p v-else="onSale"><span></span></p>
             <a v-bind:href="link">More products like this.</a>
             <div v-for="variant in variants" :key="variant.variantId">
-                <p>{{ variant.variantColor }}</p>
+                <p @mouseover="updateProduct(variant.variantImage)">{{ variant.variantColor }}</p>
 
             </div>
             <div >
                 <ul>
                 <li v-for="sizes in sizes">{{ sizes }}</li>
                 </ul>
+            </div>
+            <button v-on:click="addToCart">Add to cart</button>
+            <button v-on:click="minusToCart">Minus to cart</button>
+            <div class="cart">
+                <p>Cart({{cart}})</p>
             </div>
 
 
