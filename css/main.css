@@ -87,3 +87,12 @@ textarea {
     color: #16C0B0;
     text-decoration: underline;
 }
+.butrad {
+    margin-left: 70px;
+    justify-content: center;
+}
+label {
+    justify-content: center;
+    text-align: center;
+    margin-left: 195px;
+}

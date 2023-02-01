@@ -1,20 +1,92 @@
 Vue.component('product-details', {
-    props:{
-        details: {
-            type: Array,
-            required: true,
-        }
-    },
-    template: `<ul>
+        props: {
+            details: {
+                type: Array,
+                required: true,
+            }
+        },
+        template: `<ul>
         <li v-for="detail in details">{{detail}}</li>
     </ul>`,
-}
+    }
 )
+
+Vue.component('product-review', {
+    template: `
+   <form class="review-form" @submit.prevent="onSubmit">
+   <p v-if="errors.length">
+ <b>Please correct the following error(s):</b>
+ <ul>
+   <li v-for="error in errors">{{ error }}</li>
+ </ul>
+</p>
+
+ <p>
+   <label for="name">Name:</label>
+   <input required id="name" v-model="name" placeholder="name">
+   <p class="butrad">«Would you recommend this product?».</p>
+   <label  for="radiobuttonfirst">yes</label>
+   <input  type="radio" id="radiobuttonfirst" name="223">
+   <label for="radiobuttontwo">no</label>
+   <input type="radio" id="radiobuttontwo" name="223">
+ </p>
+
+ <p>
+   <label for="review">Review:</label>
+   <textarea id="review" v-model="review"></textarea>
+ </p>
+
+ <p>
+   <label for="rating">Rating:</label>
+   <select id="rating" v-model.number="rating">
+     <option>5</option>
+     <option>4</option>
+     <option>3</option>
+     <option>2</option>
+     <option>1</option>
+   </select>
+ </p>
+
+ <p>
+   <input type="submit" value="Submit"> 
+ </p>
+
+</form>
+ `,
+    data() {
+        return {
+            name: null,
+            review: null,
+            rating: null,
+            errors: [],
+        }
+    },
+    methods: {
+        onSubmit() {
+            if(this.name && this.review && this.rating) {
+                let productReview = {
+                    name: this.name,
+                    review: this.review,
+                    rating: this.rating
+                }
+                this.$emit('review-submitted', productReview)
+                this.name = null
+                this.review = null
+                this.rating = null
+            } else {
+                if (!this.name) this.errors.push("Name required.")
+                if (!this.review) this.errors.push("Review required.")
+                if (!this.rating) this.errors.push("Rating required.")
+            }
+            },
+
+    }
+})
 
 Vue.component('product', {
     props: {
         premium: {
-            type:Boolean,
+            type: Boolean,
             required: true
         }
     },
@@ -22,7 +94,7 @@ Vue.component('product', {
    <div class="product">
 	<div class="product-image">
             <img v-bind:alt="altText" v-bind:src="image"/>
-        </div>
+    </div>
 
         <div class="product-info">
             <h1>{{ title }}</h1>
@@ -43,11 +115,11 @@ Vue.component('product', {
                  @mouseover="updateProduct(index)">
 
             </div>
-            <div >
+
                 <ul>
                 <li v-for="sizes in sizes">{{ sizes }}</li>
                 </ul>
-            </div>
+
             <button v-on:click="addToCart"
                     :disabled="!inStock"
                     :class="{ disabledButton: !inStock }">Add to cart</button>
@@ -55,23 +127,41 @@ Vue.component('product', {
                     :disabled="!inStock"
                     :class="{ disabledButton: !inStock }">Minus to cart</button>
             <div class="cart">
+            
             </div>
 
-
+              <div>
+                <h2>Reviews</h2>
+                <p v-if="!reviews.length">There are no reviews yet.</p>
+                <ul>
+                  <li v-for="review in reviews">
+                  <p>{{ review.name }}</p>
+                  <p>Rating: {{ review.rating }}</p>
+                  <p>{{ review.review }}</p>
+                  </li>
+                </ul>
+               </div>
+  
+            <product-review @review-submitted="addReview"></product-review>
 
         </div>
    </div>
  `,
     data() {
         return {
+            //отзыв
+            name: null,
+            review: null,
+            rating: null,
+            //
             product: "Socks",
-            brand:'Vue Mastery',
+            brand: 'Vue Mastery',
             description: "A pair of warm, fuzzy socks.",
             selectedVariant: 0,
             altText: "A pair of socks",
             link: "https://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=socks",
             inventory: 100,
-            onSale:true,
+            onSale: true,
             details: ['80% cotton', '20% polyester', 'Gender-neutral'],
             variants: [
                 {
@@ -93,15 +183,19 @@ Vue.component('product', {
             },
             //this.image = variantImage
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
+            reviews: [],
         }
     },
     methods: {
+        addReview(productReview) {
+            this.reviews.push(productReview)
+        },
         addToCart() {
             this.$emit('add-to-cart');
         },
-         minusToCart() {
-             this.$emit('minus-to-cart');
-         },
+        minusToCart() {
+            this.$emit('minus-to-cart');
+        },
     },
     computed: {
         shipping() {
@@ -117,7 +211,7 @@ Vue.component('product', {
         image() {
             return this.variants[this.selectedVariant].variantImage;
         },
-        inStock(){
+        inStock() {
             return this.variants[this.selectedVariant].variantQuantity
         },
         title() {
@@ -131,7 +225,7 @@ let app = new Vue({
     el: '#app',
     data: {
         premium: true,
-        cart:[]
+        cart: []
     },
     methods: {
         updateCart(id) {
@@ -139,6 +233,6 @@ let app = new Vue({
         },
         minusToCart228(id) {
             this.cart.pop(id);
-            },
+        },
     },
 })
