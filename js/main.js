@@ -55,7 +55,6 @@ Vue.component('product', {
                     :disabled="!inStock"
                     :class="{ disabledButton: !inStock }">Minus to cart</button>
             <div class="cart">
-                <p>Cart({{cart}})</p>
             </div>
 
 
@@ -94,18 +93,15 @@ Vue.component('product', {
             },
             //this.image = variantImage
             sizes: ['S', 'M', 'L', 'XL', 'XXL', 'XXXL'],
-            //корзина
-            cart:0,
         }
     },
     methods: {
         addToCart() {
-            this.cart += 1
+            this.$emit('add-to-cart');
         },
-        minusToCart() {
-            this.cart -= 1
-        }
-        // тут будут методы
+         minusToCart() {
+             this.$emit('minus-to-cart');
+         },
     },
     computed: {
         shipping() {
@@ -134,6 +130,15 @@ Vue.component('product', {
 let app = new Vue({
     el: '#app',
     data: {
-        premium: true
-    }
+        premium: true,
+        cart:[]
+    },
+    methods: {
+        updateCart(id) {
+            this.cart.push(id);
+        },
+        minusToCart228(id) {
+            this.cart.pop(id);
+            },
+    },
 })
