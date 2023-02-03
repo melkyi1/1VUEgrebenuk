@@ -25,22 +25,23 @@ Vue.component('product-review', {
 
  <p>
    <label for="name">Name:</label>
-   <input required id="name" v-model="name" placeholder="name">
-   <p class="butrad">«Would you recommend this product?».</p>
-   <label  for="radiobuttonfirst">yes</label>
-   <input  type="radio" id="radiobuttonfirst" name="223">
-   <label for="radiobuttontwo">no</label>
-   <input type="radio" id="radiobuttontwo" name="223">
+   <input  required id="name" v-model="name" placeholder="name">
+   <input @click="hideReview" type="submit" value="Confirm name"> 
+   <p v-if="Visibility" class="butrad">«Would you recommend this product?».</p>
+   <label  style="display: none" v-show="Visibility" for="radiobuttonfirst">yes</label>
+   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttonfirst" name="223">
+   <label style="display: none" v-show="Visibility" for="radiobuttontwo">no</label>
+   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttontwo" name="223">
  </p>
 
  <p>
-   <label for="review">Review:</label>
-   <textarea id="review" v-model="review"></textarea>
+   <label style="display: none" v-show="Visibility" for="review">Review:</label>
+   <textarea required style="display: none" v-show="Visibility" id="review" v-model="review"></textarea>
  </p>
 
  <p>
-   <label for="rating">Rating:</label>
-   <select id="rating" v-model.number="rating">
+   <label style="display: none" v-show="Visibility" for="rating">Rating:</label>
+   <select style="display: none" v-show="Visibility" id="rating"   v-model.number="rating">
      <option>5</option>
      <option>4</option>
      <option>3</option>
@@ -57,6 +58,7 @@ Vue.component('product-review', {
  `,
     data() {
         return {
+            Visibility: false,
             name: null,
             review: null,
             rating: null,
@@ -64,6 +66,9 @@ Vue.component('product-review', {
         }
     },
     methods: {
+        hideReview() {
+            this.Visibility = true;
+        },
         onSubmit() {
             if(this.name && this.review && this.rating) {
                 let productReview = {
@@ -184,6 +189,9 @@ Vue.component('product', {
             <button v-on:click="minusToCart"
                     :disabled="!inStock"
                     :class="{ disabledButton: !inStock }">Minus to cart</button>
+            <button v-on:click="clearCart"
+                    :disabled="!inStock"
+                    :class="{ disabledButton: !inStock }">Clear to cart</button>
             <div class="cart">
             
             </div>
@@ -248,6 +256,9 @@ Vue.component('product', {
         minusToCart() {
             this.$emit('minus-to-cart');
         },
+        clearCart() {
+            this.$emit('clear-to-cart');
+        },
     },
     computed: {
         shipping() {
@@ -286,5 +297,15 @@ let app = new Vue({
         minusToCart228(id) {
             this.cart.pop(id);
         },
-    },
+        clearCart(id) {
+            for (let i = this.cart.length - 1; i >= 0; i--) {
+                if (this.cart[i] === id) {
+                    this.cart.splice(i, 1);
+                }
+            }
+        },
+        ratingChose() {
+            this.ratingTop = true;
+        }
+    }
 })
