@@ -29,9 +29,9 @@ Vue.component('product-review', {
    <input @click="hideReview" type="submit" value="Confirm name"> 
    <p v-if="Visibility" class="butrad">«Would you recommend this product?».</p>
    <label  style="display: none" v-show="Visibility" for="radiobuttonfirst">yes</label>
-   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttonfirst" name="223">
+   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttonfirst" name="223" @click="rating=5">
    <label style="display: none" v-show="Visibility" for="radiobuttontwo">no</label>
-   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttontwo" name="223">
+   <input style="display: none" v-show="Visibility" type="radio" id="radiobuttontwo" name="223" @click="rating=1">
  </p>
 
  <p>
