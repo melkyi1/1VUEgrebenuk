@@ -89,6 +89,13 @@ Vue.component('product-tabs', {
         reviews: {
             type: Array,
             required: false
+        },
+        shipping: {
+            required: true
+        },
+        details: {
+            type: Array,
+            required: true
         }
     },
     template: `
@@ -113,13 +120,21 @@ Vue.component('product-tabs', {
        <div v-show="selectedTab === 'Make a Review'">
          <product-review></product-review>
        </div>
+       <div v-show="selectedTab === 'Shipping'">
+       <p>Shipping:{{shipping}}</p> 
+</div>
+<div v-show="selectedTab === 'Details'">
+<ul>
+                <li v-for="detail in details">{{ detail }}</li>
+            </ul>
+</div>
      </div>
 `,
 
 
     data() {
         return {
-            tabs: ['Reviews', 'Make a Review'],
+            tabs: ['Reviews', 'Make a Review', 'Shipping', 'Details'],
             selectedTab: 'Reviews'
         }
     }
@@ -146,16 +161,12 @@ Vue.component('product', {
         <div class="product-info">
             <h1>{{ title }}</h1>
             <p>{{description}}</p>
-            <ul>
-                <li v-for="detail in details">{{ detail }}</li>
-            </ul>
             <p v-if="inventory > 10">In Stock</p>
             <p v-else-if="inventory <= 10 && inventory > 0">Almost sold out!</p>
             <p v-else style="text-decoration: line-through">Out of Stock</p>
             <p v-if="onSale"><span>{{sale}} On sale</span></p>
             <p v-else="onSale"><span></span></p>
             <a v-bind:href="link">More products like this.</a>
-            <p>Shipping:{{shipping}}</p> 
             <div class="color-box"
                  v-for="(variant, index) in variants"
                  :style="{ backgroundColor:variant.variantColor }"
@@ -179,7 +190,7 @@ Vue.component('product', {
 
               
         </div>
-                    <product-tabs :reviews="reviews" ></product-tabs>
+                    <product-tabs :reviews="reviews" :shipping="shipping" :details="details" ></product-tabs>
    </div>
  `,
     data() {
